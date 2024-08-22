@@ -32,7 +32,7 @@ const HomePage: React.FC = () => {
     <View style={HomePageStyle.container}>
       <SearchComponent />
       <View style={{height: 10}} />
-      <StatusSelectorComponent />
+      <StatusSelectorComponent onPress={status => console.log(status)} />
       <View style={{height: 50}} />
       <WordsComponent words={elements} />
     </View>

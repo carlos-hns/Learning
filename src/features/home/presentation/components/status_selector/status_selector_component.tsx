@@ -2,7 +2,13 @@ import React, {useState} from 'react';
 import {View} from 'react-native';
 import ChipComponent from '../chip/chip_component';
 
-const StatusSelectorComponent: React.FC = () => {
+interface StatusSelectorComponentProps {
+  onPress: (status: string) => void;
+}
+
+const StatusSelectorComponent: React.FC<StatusSelectorComponentProps> = (
+  props: StatusSelectorComponentProps,
+) => {
   const [ative, setActive] = useState<string>('todos');
 
   return (
@@ -14,17 +20,26 @@ const StatusSelectorComponent: React.FC = () => {
       <ChipComponent
         isActive={ative === 'todos'}
         text={'Todos'}
-        onPress={() => setActive('todos')}
+        onPress={() => {
+          props.onPress('todos');
+          setActive('todos');
+        }}
       />
       <ChipComponent
         isActive={ative === 'aprendido'}
         text={'Aprendido'}
-        onPress={() => setActive('aprendido')}
+        onPress={() => {
+          props.onPress('aprendido');
+          setActive('aprendido');
+        }}
       />
       <ChipComponent
         isActive={ative === 'revisar'}
         text={'Revisão'}
-        onPress={() => setActive('revisar')}
+        onPress={() => {
+          props.onPress('revisar');
+          setActive('revisar');
+        }}
       />
     </View>
   );
