@@ -10,12 +10,14 @@ import WordEntity from '../../domain/entities/word';
 const elements: WordEntity[] = [
   {
     id: 1,
+    status: 'aprendido',
     word: 'Red',
     explanation: 'Red is a color',
     phrases: ['The car is red'],
   },
   {
     id: 2,
+    status: 'revisar',
     word: 'Duck',
     explanation: 'Ducks are birds/waterfowls',
     phrases: [
@@ -28,6 +30,7 @@ const HomePage: React.FC = () => {
   return (
     <View style={HomePageStyle.container}>
       <SearchComponent />
+      <View style={{height: 50}} />
       <WordsComponent words={elements} />
     </View>
   );

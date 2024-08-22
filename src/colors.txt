@@ -1,0 +1,7 @@
+#2e3532
+#7e9181
+#c7cedb
+#a0aab2
+#94849b
+
+https://oblador.github.io/react-native-vector-icons/

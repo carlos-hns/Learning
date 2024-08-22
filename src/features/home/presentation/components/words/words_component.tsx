@@ -1,6 +1,7 @@
 import React from 'react';
 import {FlatList, Pressable, Text, View} from 'react-native';
 import WordEntity from '../../../domain/entities/word';
+import WordComponent from '../word/word_component';
 
 interface WordsComponentProps {
   words: WordEntity[];
@@ -14,9 +15,12 @@ const WordsComponent: React.FC<WordsComponentProps> = (
       <FlatList
         data={props.words}
         renderItem={word => (
-          <Pressable>
-            <Text style={{color: 'white'}}>Teste</Text>
-          </Pressable>
+          <>
+            <Pressable>
+              <WordComponent word={word.item} />
+            </Pressable>
+            <View style={{height: 5}} />
+          </>
         )}
       />
     </>
