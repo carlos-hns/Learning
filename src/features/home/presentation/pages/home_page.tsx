@@ -6,6 +6,7 @@ import HomePageStyle from './home_page.styles';
 import SearchComponent from '../components/search/search_component';
 import WordsComponent from '../components/words/words_component';
 import WordEntity from '../../domain/entities/word';
+import StatusSelectorComponent from '../components/status_selector/status_selector_component';
 
 const elements: WordEntity[] = [
   {
@@ -30,6 +31,8 @@ const HomePage: React.FC = () => {
   return (
     <View style={HomePageStyle.container}>
       <SearchComponent />
+      <View style={{height: 10}} />
+      <StatusSelectorComponent />
       <View style={{height: 50}} />
       <WordsComponent words={elements} />
     </View>

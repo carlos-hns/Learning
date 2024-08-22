@@ -1,6 +1,6 @@
 import React from 'react';
 
-import WordComponentStyle from './word_component.styles';
+import WordComponentStyle from './word_component_styles';
 import {Text, View} from 'react-native';
 import WordEntity from '../../../domain/entities/word';
 

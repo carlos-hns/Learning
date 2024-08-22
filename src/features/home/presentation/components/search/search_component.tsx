@@ -2,7 +2,7 @@ import React from 'react';
 import {TextInput, View} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import SearchComponentStyle from './search_component.styles';
+import SearchComponentStyle from './search_component_styles';
 
 const SearchComponent: React.FC = () => {
   return (

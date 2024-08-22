@@ -11,7 +11,6 @@ const WordComponentStyle = StyleSheet.create({
     gap: 10,
     paddingLeft: 15,
     paddingRight: 10,
-    marginHorizontal: 10,
     height: 45,
   },
   borderLearned: {

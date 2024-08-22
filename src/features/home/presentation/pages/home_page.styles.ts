@@ -4,6 +4,7 @@ const HomePageStyle = StyleSheet.create({
   container: {
     flex: 1,
     paddingVertical: 20,
+    paddingHorizontal: 20,
     backgroundColor: '#2e3532',
   },
 });
