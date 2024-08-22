@@ -3,7 +3,7 @@ import {View} from 'react-native';
 import ChipComponent from '../chip/chip_component';
 
 const StatusSelectorComponent: React.FC = () => {
-  const [ative, setActive] = useState<string>('revisar');
+  const [ative, setActive] = useState<string>('todos');
 
   return (
     <View
@@ -11,6 +11,11 @@ const StatusSelectorComponent: React.FC = () => {
         gap: 5,
         flexDirection: 'row',
       }}>
+      <ChipComponent
+        isActive={ative === 'todos'}
+        text={'Todos'}
+        onPress={() => setActive('todos')}
+      />
       <ChipComponent
         isActive={ative === 'aprendido'}
         text={'Aprendido'}
@@ -20,11 +25,6 @@ const StatusSelectorComponent: React.FC = () => {
         isActive={ative === 'revisar'}
         text={'Revisão'}
         onPress={() => setActive('revisar')}
-      />
-      <ChipComponent
-        isActive={ative === 'todos'}
-        text={'Todos'}
-        onPress={() => setActive('todos')}
       />
     </View>
   );
