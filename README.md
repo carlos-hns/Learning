@@ -1,4 +1,19 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Comandos úteis para projetos React Native
+
+npx @react-native-community/cli@latest init AwesomeProject
+npm start
+
+taskkill /F /IM node.exe
+
+npx react-native run-android
+
+rm -rf node_modules
+npm i
+cd android
+./gradlew clean
+npx react-native run-android
+
+npx react-native info
 
 # Getting Started
 
