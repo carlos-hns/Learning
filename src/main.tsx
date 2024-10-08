@@ -1,11 +1,12 @@
 import React from 'react';
 
-import HomePage from './features/home/presentation/pages/home_page';
+import HomePage from './features/home/presentation/pages/home/home_page';
 import {NavigationContainer} from '@react-navigation/native';
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from '@react-navigation/native-stack';
+import InformationPage from './features/home/presentation/pages/information/information_page';
 
 const Stack = createNativeStackNavigator();
 
@@ -19,7 +20,10 @@ export type StackTypes = NativeStackNavigationProp<StackNavitation>;
 const App: React.FC = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{
+          presentation: 'transparentModal',
+        }}>
         <Stack.Screen
           name="Home"
           component={HomePage}
@@ -27,7 +31,7 @@ const App: React.FC = () => {
         />
         <Stack.Screen
           name="Info"
-          component={HomePage}
+          component={InformationPage}
           options={{headerShown: false}}
         />
       </Stack.Navigator>

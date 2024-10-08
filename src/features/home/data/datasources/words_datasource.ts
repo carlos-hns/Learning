@@ -18,6 +18,9 @@ class WordsDatasourceImpl implements IWordsDatasource {
   }
 
   async init() {
+    // await this.db.executeSql(`DELETE FROM ${this.wordsTableName}`);
+    // await this.db.executeSql(`DELETE FROM ${this.wordExamplesTableName}`);
+
     const wordsTableQuery = `CREATE TABLE IF NOT EXISTS ${this.wordsTableName}(
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       status TEXT NOT NULL,

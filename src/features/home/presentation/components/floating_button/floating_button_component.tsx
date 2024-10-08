@@ -5,6 +5,7 @@ import FloatingButtonComponentStyle from './floating_button_component_styles';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 interface FloatingButtonComponentProps {
+  icon?: string | undefined;
   onPress: () => void;
 }
 
@@ -16,7 +17,7 @@ const FloattingButtonComponent: React.FC<FloatingButtonComponentProps> = (
       onPress={() => props.onPress()}
       style={FloatingButtonComponentStyle.container}>
       <Icon
-        name="plus"
+        name={props.icon ? props.icon : 'plus'}
         size={15}
         color={FloatingButtonComponentStyle.icon.color}
       />
