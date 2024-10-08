@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {View} from 'react-native';
+import {Text, View} from 'react-native';
 
 import HomePageStyle from './home_page.styles';
 
@@ -13,8 +13,12 @@ import {
   WordsDatasourceImpl,
 } from '../../data/datasources/words_datasource';
 import {SQLiteDatabase} from 'react-native-sqlite-storage';
+import FloattingButtonComponent from '../components/floating_button/floating_button_component';
+import {useNavigation} from '@react-navigation/native';
+import {StackTypes} from '../../../../main';
 
 const HomePage: React.FC = () => {
+  const navigation = useNavigation<StackTypes>();
   const [status, setStatus] = useState<string>('todos');
   const [words, setWords] = useState<WordEntity[]>([]);
 
@@ -67,10 +71,6 @@ const HomePage: React.FC = () => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   loadWords(status);
-  // }, [loadWords]);
-
   useEffect(() => {
     loadWords(status);
   }, [status]);
@@ -82,6 +82,11 @@ const HomePage: React.FC = () => {
       <StatusSelectorComponent onPress={status => setStatus(status)} />
       <View style={{height: 50}} />
       <WordsComponent words={words} />
+      <FloattingButtonComponent
+        onPress={() => {
+          navigation.navigate('Info');
+        }}
+      />
     </View>
   );
 };
