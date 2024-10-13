@@ -12,7 +12,7 @@ import {
 } from '../../../data/datasources/words_datasource';
 import {SQLiteDatabase} from 'react-native-sqlite-storage';
 import FloattingButtonComponent from '../../components/floating_button/floating_button_component';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {StackTypes} from '../../../../../main';
 import HomePageStyle from './home_page.styles';
 
@@ -48,24 +48,6 @@ const HomePage: React.FC = () => {
 
         setWords(wordsFiltered);
       }
-
-      // await datasource.saveWord({
-      //   id: 1,
-      //   status: 'aprendido',
-      //   word: 'Red',
-      //   explanation: 'Red is a color',
-      //   phrases: ['The car is red'],
-      // });
-
-      // await datasource.saveWord({
-      //   id: 2,
-      //   status: 'revisar',
-      //   word: 'Duck',
-      //   explanation: 'Ducks are birds/waterfowls',
-      //   phrases: [
-      //     'The ducks started quacking loudly when we threw them some bread',
-      //   ],
-      // });
     } catch (error) {
       console.error(error);
     }
@@ -74,6 +56,12 @@ const HomePage: React.FC = () => {
   useEffect(() => {
     loadWords(status);
   }, [status]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadWords(status);
+    }, []),
+  );
 
   return (
     <View style={HomePageStyle.container}>

@@ -1,5 +1,5 @@
 type WordEntity = {
-  id: number;
+  id?: number | undefined;
   status: string;
   word: string;
   explanation: string;
