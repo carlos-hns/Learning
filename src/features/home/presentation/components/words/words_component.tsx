@@ -5,6 +5,7 @@ import WordComponent from '../word/word_component';
 import WordsComponentStyle from './words_component_styles';
 
 interface WordsComponentProps {
+  onTapItem: (word: WordEntity) => void;
   words: WordEntity[];
 }
 
@@ -28,7 +29,7 @@ const WordsComponent: React.FC<WordsComponentProps> = (
         data={props.words}
         renderItem={word => (
           <>
-            <Pressable>
+            <Pressable onPress={event => props.onTapItem(word.item)}>
               <WordComponent word={word.item} />
             </Pressable>
             <View style={{height: 5}} />

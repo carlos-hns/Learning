@@ -18,49 +18,58 @@ import HomePageStyle from './home_page.styles';
 
 const HomePage: React.FC = () => {
   const navigation = useNavigation<StackTypes>();
-
+  const [datasource, setDatasource] = useState<IWordsDatasource>();
   const [status, setStatus] = useState<string>('todos');
   const [words, setWords] = useState<WordEntity[]>([]);
 
-  const loadWords = useCallback(async (status: string) => {
-    try {
+  const loadWords = useCallback(
+    async (status: string) => {
+      try {
+        if (status === 'todos') {
+          const words: WordEntity[] = (await datasource?.getWords()) ?? [];
+          setWords(words);
+        } else {
+          const words: WordEntity[] = (await datasource?.getWords()) ?? [];
+          let wordsFiltered: WordEntity[] = [];
+
+          for (let i = 0; i < words.length; i++) {
+            const word: WordEntity | undefined = words.at(i);
+
+            if (word?.status === status) {
+              wordsFiltered.push(word);
+            }
+          }
+
+          setWords(wordsFiltered);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [datasource, status],
+  );
+
+  useEffect(() => {
+    const prepareDatabase = async () => {
       const db: SQLiteDatabase = await getDBConnection();
       const datasource: IWordsDatasource = new WordsDatasourceImpl(db);
+      await datasource?.init();
+      setDatasource(datasource);
+    };
 
-      await datasource.init();
-
-      console.log(status);
-
-      if (status === 'todos') {
-        setWords(await datasource.getWords());
-        return;
-      } else {
-        const words: WordEntity[] = await datasource.getWords();
-        let wordsFiltered: WordEntity[] = [];
-
-        for (let i = 0; i < words.length; i++) {
-          const word: WordEntity | undefined = words.at(i);
-
-          if (word?.status === status) {
-            wordsFiltered.push(word);
-          }
-        }
-
-        setWords(wordsFiltered);
-      }
-    } catch (error) {
-      console.error(error);
-    }
+    prepareDatabase();
   }, []);
 
   useEffect(() => {
-    loadWords(status);
-  }, [status]);
+    if (datasource) {
+      loadWords(status);
+    }
+  }, [datasource, status]);
 
   useFocusEffect(
     useCallback(() => {
       loadWords(status);
-    }, []),
+    }, [datasource, status]),
   );
 
   return (
@@ -69,7 +78,18 @@ const HomePage: React.FC = () => {
       <View style={{height: 10}} />
       <StatusSelectorComponent onPress={status => setStatus(status)} />
       <View style={{height: 50}} />
-      <WordsComponent words={words} />
+      <WordsComponent
+        words={words}
+        onTapItem={async word => {
+          const updatedWord = {...word};
+
+          updatedWord.status =
+            updatedWord.status === 'revisar' ? 'aprendido' : 'revisar';
+
+          await datasource?.updateWord(updatedWord);
+          loadWords(status);
+        }}
+      />
       <FloattingButtonComponent
         onPress={() => {
           navigation.navigate('Info');

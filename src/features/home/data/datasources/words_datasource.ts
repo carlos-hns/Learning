@@ -5,6 +5,7 @@ interface IWordsDatasource {
   init(): Promise<void>;
   getWords(): Promise<WordEntity[]>;
   saveWord(word: WordEntity): Promise<void>;
+  updateWord(word: WordEntity): Promise<void>;
 }
 
 class WordsDatasourceImpl implements IWordsDatasource {
@@ -85,10 +86,29 @@ class WordsDatasourceImpl implements IWordsDatasource {
           '${word.phrases.at(i)}'
         );`;
 
-        // console.log(saveWordExplanationQuery);
-
         await this.db.executeSql(saveWordExplanationQuery);
       }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(`Erro ao salvar palavra: ${error.message}`);
+      }
+    }
+  }
+
+  async updateWord(word: WordEntity) {
+    try {
+      const updateWordQuery = `
+        UPDATE ${this.wordsTableName} 
+        SET status = ?, word = ?, explanation = ?
+        WHERE id = ?
+      `;
+
+      await this.db.executeSql(updateWordQuery, [
+        word.status,
+        word.word,
+        word.explanation,
+        word.id,
+      ]);
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error(`Erro ao salvar palavra: ${error.message}`);

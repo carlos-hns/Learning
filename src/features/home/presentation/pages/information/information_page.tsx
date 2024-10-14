@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect} from 'react';
-import {Text, TextInput, View} from 'react-native';
+import {ScrollView, Text, TextInput, View} from 'react-native';
 
 import InformationPageStyle from './information_page.styles';
 import FloattingButtonComponent from '../../components/floating_button/floating_button_component';
@@ -41,35 +41,42 @@ const InformationPage: React.FC = () => {
   }, []);
 
   return (
-    <View style={InformationPageStyle.container}>
-      <Text style={InformationPageStyle.text}>Palavra:</Text>
-      <View style={{height: 10}} />
-      <TextInput
-        placeholder="Insira uma palavra"
-        placeholderTextColor={InformationPageStyle.input.color}
-        style={InformationPageStyle.input}
-        onChangeText={text => (word.word = text)}
-      />
-      <View style={{height: 30}} />
-      <Text style={InformationPageStyle.text}>Explicação:</Text>
-      <View style={{height: 10}} />
-      <TextInput
-        multiline={true}
-        numberOfLines={4}
-        textAlignVertical="top"
-        placeholder="Insira uma explicação"
-        placeholderTextColor={InformationPageStyle.input.color}
-        style={InformationPageStyle.input}
-        onChangeText={text => (word.explanation = text)}
-      />
-      <FloattingButtonComponent
-        icon="save"
-        onPress={async () => {
-          await datasource?.saveWord(word);
-          navigation.pop();
-        }}
-      />
-    </View>
+    <ScrollView
+      contentContainerStyle={{
+        flex: 1,
+      }}>
+      <View style={InformationPageStyle.container}>
+        <Text style={InformationPageStyle.text}>Palavra:</Text>
+        <View style={{height: 10}} />
+        <TextInput
+          placeholder="Insira uma palavra"
+          placeholderTextColor={InformationPageStyle.input.color}
+          style={InformationPageStyle.input}
+          onChangeText={text => (word.word = text)}
+        />
+        <View style={{height: 30}} />
+        <Text style={InformationPageStyle.text}>Explicação:</Text>
+        <View style={{height: 10}} />
+        <TextInput
+          multiline={true}
+          numberOfLines={4}
+          textAlignVertical="top"
+          placeholder="Insira uma explicação"
+          placeholderTextColor={InformationPageStyle.input.color}
+          style={InformationPageStyle.input}
+          onChangeText={text => (word.explanation = text)}
+        />
+        <FloattingButtonComponent
+          icon="save"
+          onPress={async () => {
+            if (word.word !== '') {
+              await datasource?.saveWord(word);
+              navigation.pop();
+            }
+          }}
+        />
+      </View>
+    </ScrollView>
   );
 };
 
