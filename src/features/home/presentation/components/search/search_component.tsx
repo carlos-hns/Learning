@@ -4,7 +4,13 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import SearchComponentStyle from './search_component_styles';
 
-const SearchComponent: React.FC = () => {
+interface SearchComponentProps {
+  onChange: (text: string) => void;
+}
+
+const SearchComponent: React.FC<SearchComponentProps> = (
+  props: SearchComponentProps,
+) => {
   return (
     <View style={SearchComponentStyle.container}>
       <Icon name="search" size={15} color={SearchComponentStyle.icons.color} />
@@ -13,6 +19,7 @@ const SearchComponent: React.FC = () => {
         placeholderTextColor={SearchComponentStyle.input.color}
         style={SearchComponentStyle.input}
         placeholder="Procure por uma palavra"
+        onChangeText={text => props.onChange(text)}
       />
     </View>
   );

@@ -19,34 +19,34 @@ import HomePageStyle from './home_page.styles';
 const HomePage: React.FC = () => {
   const navigation = useNavigation<StackTypes>();
   const [datasource, setDatasource] = useState<IWordsDatasource>();
+  const [filteredText, setFilteredText] = useState<string>('');
   const [status, setStatus] = useState<string>('todos');
   const [words, setWords] = useState<WordEntity[]>([]);
 
   const loadWords = useCallback(
     async (status: string) => {
       try {
-        if (status === 'todos') {
-          const words: WordEntity[] = (await datasource?.getWords()) ?? [];
-          setWords(words);
-        } else {
-          const words: WordEntity[] = (await datasource?.getWords()) ?? [];
-          let wordsFiltered: WordEntity[] = [];
+        const words: WordEntity[] = (await datasource?.getWords()) ?? [];
+        let wordsFiltered: WordEntity[] = [];
 
-          for (let i = 0; i < words.length; i++) {
-            const word: WordEntity | undefined = words.at(i);
+        for (let i = 0; i < words.length; i++) {
+          const word: WordEntity = words.at(i)!;
 
-            if (word?.status === status) {
-              wordsFiltered.push(word);
-            }
+          const matchesFilter =
+            filteredText === '' ||
+            word.word.toLowerCase().includes(filteredText.toLowerCase());
+
+          if ((status === 'todos' || word.status === status) && matchesFilter) {
+            wordsFiltered.push(word);
           }
-
-          setWords(wordsFiltered);
         }
+
+        setWords(wordsFiltered);
       } catch (error) {
         console.error(error);
       }
     },
-    [datasource, status],
+    [datasource, status, filteredText],
   );
 
   useEffect(() => {
@@ -64,7 +64,7 @@ const HomePage: React.FC = () => {
     if (datasource) {
       loadWords(status);
     }
-  }, [datasource, status]);
+  }, [datasource, status, filteredText]);
 
   useFocusEffect(
     useCallback(() => {
@@ -74,7 +74,11 @@ const HomePage: React.FC = () => {
 
   return (
     <View style={HomePageStyle.container}>
-      <SearchComponent />
+      <SearchComponent
+        onChange={text => {
+          setFilteredText(text);
+        }}
+      />
       <View style={{height: 10}} />
       <StatusSelectorComponent onPress={status => setStatus(status)} />
       <View style={{height: 50}} />
