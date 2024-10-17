@@ -1,43 +1,39 @@
-import React, {useCallback, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ScrollView, Text, TextInput, View} from 'react-native';
+
+import {SQLiteDatabase} from 'react-native-sqlite-storage';
+import {getDBConnection} from '../../controllers/home_page_controller';
+
+import {useNavigation} from '@react-navigation/native';
+import {StackTypes} from '../../../../../main';
 
 import InformationPageStyle from './information_page.styles';
 import FloattingButtonComponent from '../../components/floating_button/floating_button_component';
-import {useNavigation} from '@react-navigation/native';
-import {StackTypes} from '../../../../../main';
-import WordEntity from '../../../domain/entities/word';
-import {SQLiteDatabase} from 'react-native-sqlite-storage';
-import {
-  IWordsDatasource,
-  WordsDatasourceImpl,
-} from '../../../data/datasources/words_datasource';
-import {getDBConnection} from '../../controllers/home_page_controller';
+
+import IWordsDatasource from '../../../../../core/data/datasources/words_datasource';
+import IWordsRepository from '../../../../../core/domain/repositories/words_repository';
+import WordsLocalDatasourceImp from '../../../../../core/data/datasources/words_datasource_imp';
+import WordsRepositoryImp from '../../../../../core/data/repositories/words_repository_imp';
+import SaveWordUsecase from '../../../domain/usecases/save_word_usecase';
+import WordEntity from '../../../../../core/domain/entities/word_entity';
 
 const InformationPage: React.FC = () => {
-  let word: WordEntity = {
-    status: 'revisar',
-    word: '',
-    explanation: '',
-    phrases: [],
-  };
-
   const navigation = useNavigation<StackTypes>();
-  let db: SQLiteDatabase | undefined;
-  let datasource: IWordsDatasource | undefined;
 
-  const init = useCallback(async () => {
-    try {
-      db = await getDBConnection();
-      datasource = new WordsDatasourceImpl(db);
-
-      await datasource.init();
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
+  const [word, setWord] = useState<string>();
+  const [explanation, setExplanation] = useState<string>();
+  const [saveWordUsecase, setsaveWordUsecase] = useState<SaveWordUsecase>();
 
   useEffect(() => {
-    init();
+    const prepareDependencies = async () => {
+      const db: SQLiteDatabase = await getDBConnection();
+      const datasource: IWordsDatasource = new WordsLocalDatasourceImp(db);
+      const repository: IWordsRepository = new WordsRepositoryImp(datasource);
+      const saveWordUsecase: SaveWordUsecase = new SaveWordUsecase(repository);
+      setsaveWordUsecase(saveWordUsecase);
+    };
+
+    prepareDependencies();
   }, []);
 
   return (
@@ -52,7 +48,7 @@ const InformationPage: React.FC = () => {
           placeholder="Insira uma palavra"
           placeholderTextColor={InformationPageStyle.input.color}
           style={InformationPageStyle.input}
-          onChangeText={text => (word.word = text)}
+          onChangeText={text => setWord(text)}
         />
         <View style={{height: 30}} />
         <Text style={InformationPageStyle.text}>Explicação:</Text>
@@ -64,13 +60,19 @@ const InformationPage: React.FC = () => {
           placeholder="Insira uma explicação"
           placeholderTextColor={InformationPageStyle.input.color}
           style={InformationPageStyle.input}
-          onChangeText={text => (word.explanation = text)}
+          onChangeText={text => setExplanation(text)}
         />
         <FloattingButtonComponent
           icon="save"
           onPress={async () => {
-            if (word.word !== '') {
-              await datasource?.saveWord(word);
+            if (word !== '' && explanation !== '') {
+              saveWordUsecase?.fetch({
+                status: 'revisar',
+                word: word ?? 'Empty',
+                explanation: explanation ?? 'Empty',
+                phrases: [],
+              });
+
               navigation.pop();
             }
           }}
