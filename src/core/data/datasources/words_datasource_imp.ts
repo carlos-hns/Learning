@@ -1,16 +1,9 @@
 import {SQLiteDatabase} from 'react-native-sqlite-storage';
-import WordEntity from '../../domain/entities/word';
+import IWordsDatasource from './words_datasource';
+import WordDTO from '../dtos/word_dto';
 
-interface IWordsDatasource {
-  init(): Promise<void>;
-  getWords(): Promise<WordEntity[]>;
-  saveWord(word: WordEntity): Promise<void>;
-  updateWord(word: WordEntity): Promise<void>;
-}
-
-class WordsDatasourceImpl implements IWordsDatasource {
+class WordsLocalDatasourceImp implements IWordsDatasource {
   db: SQLiteDatabase;
-
   wordsTableName: string = 'words';
   wordExamplesTableName: string = 'word_examples';
 
@@ -18,31 +11,31 @@ class WordsDatasourceImpl implements IWordsDatasource {
     this.db = db;
   }
 
-  async init() {
+  async prepare() {
     // await this.db.executeSql(`DELETE FROM ${this.wordsTableName}`);
     // await this.db.executeSql(`DELETE FROM ${this.wordExamplesTableName}`);
 
     const wordsTableQuery = `CREATE TABLE IF NOT EXISTS ${this.wordsTableName}(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      status TEXT NOT NULL,
-      word TEXT NOT NULL,
-      explanation TEXT
-    );`;
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        status TEXT NOT NULL,
+        word TEXT NOT NULL,
+        explanation TEXT
+      );`;
 
     const examplesTableQuery = `CREATE TABLE IF NOT EXISTS ${this.wordExamplesTableName}(
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      word_id INTEGER NOT NULL,
-      phrase TEXT NOT NULL,
-      FOREIGN KEY (word_id) REFERENCES ${this.wordsTableName} ON DELETE CASCADE
-    );`;
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        word_id INTEGER NOT NULL,
+        phrase TEXT NOT NULL,
+        FOREIGN KEY (word_id) REFERENCES ${this.wordsTableName} ON DELETE CASCADE
+      );`;
 
     await this.db.executeSql(wordsTableQuery);
     await this.db.executeSql(examplesTableQuery);
   }
 
-  async getWords(): Promise<WordEntity[]> {
+  async getWords(): Promise<WordDTO[]> {
     try {
-      const words: WordEntity[] = [];
+      const words: WordDTO[] = [];
 
       const results = await this.db.executeSql(
         `SELECT * FROM ${this.wordsTableName} ORDER BY word`,
@@ -61,17 +54,17 @@ class WordsDatasourceImpl implements IWordsDatasource {
     }
   }
 
-  async saveWord(word: WordEntity) {
+  async saveWord(word: WordDTO) {
     try {
       const saveWordQuery = `INSERT INTO ${this.wordsTableName}(
-        status,
-        word, 
-        explanation
-      ) VALUES (
-        '${word.status}',
-        '${word.word}',
-        '${word.explanation}'
-      );`;
+          status,
+          word, 
+          explanation
+        ) VALUES (
+          '${word.status}',
+          '${word.word}',
+          '${word.explanation}'
+        );`;
 
       await this.db.executeSql(saveWordQuery);
 
@@ -79,12 +72,12 @@ class WordsDatasourceImpl implements IWordsDatasource {
         const saveWordExplanationQuery = `INSERT INTO ${
           this.wordExamplesTableName
         }(
-          word_id,
-          phrase,
-        ) VALUES (
-          last_insert_rowid(),
-          '${word.phrases.at(i)}'
-        );`;
+            word_id,
+            phrase,
+          ) VALUES (
+            last_insert_rowid(),
+            '${word.phrases.at(i)}'
+          );`;
 
         await this.db.executeSql(saveWordExplanationQuery);
       }
@@ -95,13 +88,13 @@ class WordsDatasourceImpl implements IWordsDatasource {
     }
   }
 
-  async updateWord(word: WordEntity) {
+  async updateWord(word: WordDTO) {
     try {
       const updateWordQuery = `
-        UPDATE ${this.wordsTableName} 
-        SET status = ?, word = ?, explanation = ?
-        WHERE id = ?
-      `;
+          UPDATE ${this.wordsTableName} 
+          SET status = ?, word = ?, explanation = ?
+          WHERE id = ?
+        `;
 
       await this.db.executeSql(updateWordQuery, [
         word.status,
@@ -117,5 +110,4 @@ class WordsDatasourceImpl implements IWordsDatasource {
   }
 }
 
-export {WordsDatasourceImpl};
-export type {IWordsDatasource};
+export default WordsLocalDatasourceImp;
